@@ -12,6 +12,7 @@ inverted=1
 
 function init()
 	obstacles={}
+	
 	for i=0, 4 do
 		obstacles[i]=createObstacle(DEFAULT_OBSTACLE_Y+i*100)
 	end
@@ -67,15 +68,15 @@ function playerMovement()
 	if btn(3) then player.x=player.x+1*inverted end
 	if btn(2) then player.x = player.x-1*inverted end
 	if(checkBounds()) then 
-		if player.x>207 then player.x=207
-		else player.x=23
+		if player.x>199 then player.x=199
+		else player.x=24
 		end
 	end
 end
 
 
 function checkBounds()
-	if(player.x<23 or player.x>207) then
+	if(player.x<24 or player.x>199) then
 		return true
 	else
 		return false
