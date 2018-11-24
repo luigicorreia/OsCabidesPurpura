@@ -24,6 +24,10 @@ function init()
 
 	isLeftSide=true
 
+	
+
+	weapon={}
+
 
 	gameover=false
 
@@ -50,6 +54,7 @@ function spriteReturn(animation, n, acceleration, n0)
 
 	return hangerSpriteNumber
 end
+
 
 
 
@@ -147,10 +152,10 @@ function draw()
 		isLeftSide=true	
 	end
 	
+	--drawReflexion()
+	
 	drawWeapon()
 	drawCrossair()
-	--drawReflexion()
-
 
 end
 
@@ -158,8 +163,8 @@ end
 init()
 function TIC()
 	playerMovement()
-
 	shoot()
+
 	updateWeapon()
 	draw()
 	t=t+1
