@@ -1,19 +1,35 @@
--- title:  game title
--- author: game developer
--- desc:   short description
+-- title:  cAbIdEs
+-- author: cabides
+-- desc:   lança cruzetas
 -- script: lua
 
-t=0
-x=96
-y=24
 DEFAULT_OBSTACLE_Y=-460
+
+t=0
+x=110
+y=85
+inverted=1
 
 function init()
 	obstacles={}
 	for i=0, 4 do
 		obstacles[i]=createObstacle(DEFAULT_OBSTACLE_Y+i*100)
 	end
+
+	gameover=false
+
+	reverse=0
+
+	player={
+		x=110,
+		y=110
+	}
+
+	Inventory ={
+		weapon ="cabide"
+	}
 end	
+
 
 function createObstacle(yValue)
 	obstaclesTemp={}
@@ -23,6 +39,7 @@ function createObstacle(yValue)
 
 	return obstaclesTemp
 end
+
 
 function updateObstacles()
 	for i=0, 4 do
@@ -36,6 +53,7 @@ function updateObstacles()
 	end
 end
 
+
 function drawObstacles()
 	for i=0, 4 do
 		for j=0, 7 do
@@ -44,25 +62,48 @@ function drawObstacles()
 	end
 end
 
-function draw()
-	cls(13)
-	spr(1+t%60//30*2,x,y,14,3,0,0,2,2)
-	drawObstacles()
-	print("HELLO WORLD!",84,84)
+
+function playerMovement()
+	if btn(3) then player.x=player.x+1*inverted end
+	if btn(2) then player.x = player.x-1*inverted end
+	if(checkBounds()) then 
+		if player.x>207 then player.x=207
+		else player.x=23
+		end
+	end
 end
+
+
+function checkBounds()
+	if(player.x<23 or player.x>207) then
+		return true
+	else
+		return false
+	end
+end
+
+
+function draw()
+
+	cls(13)
+	spr(1,player.x,player.y,14,1,0,0,2,2)
+	print("Hello Cabide!",85,0)
+	drawObstacles()
+
+end
+
 
 init()
 function TIC()
-	if btn(0) then y=y-1 end
-	if btn(1) then y=y+1 end
-	if btn(2) then x=x-1 end
-	if btn(3) then x=x+1 end
+	playerMovement()
 	
 	updateObstacles()
+
 	draw()
 	t=t+1
-	print(obstacles[0][0].y)
+	
 end
+
 
 -- <TILES>
 -- 001:efffffffff222222f8888888f8222222f8fffffff8ff0ffff8ff0ffff8ff0fff
