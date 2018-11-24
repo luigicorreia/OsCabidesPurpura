@@ -10,19 +10,30 @@ x=110
 y=85
 inverted=1
 createdWeapon = 0
-
+left=0
+right=0
+up=0
+down=0
 
 hangerAnimation = {261,263,265,267}
 hangern0 = 261
 iceAnimation = {336, 339}
-characterAnimation = {289, 291, 293, 295}
+characterAnimationUp = {289, 291, 293, 295}
+characterSidewaysLeft = {422,424,426,428}
+characterSidewaysRight = {454,456,458,460}
+characterAnimationDown = {390,392,394,396}
 wardrobeAnimation = {384, 387}
 drawerAnimation = {432, 435}
+spammingHanger = 30
+hangerShot = false
+canShoot = true
+
+
 
 
 function init()
 	obstacles={}
-
+	
 	weapon={}
 
 	for i=0, 4 do
@@ -90,10 +101,34 @@ end
 
 
 function playerMovement()
-	if btn(0) then player.y=player.y-1*inverted end
-	if btn(1) then player.y=player.y+1*inverted end 
-	if btn(3) then player.x=player.x+1*inverted end
-	if btn(2) then player.x = player.x-1*inverted end
+	if btn(0) then
+		up=1
+		down=0
+		right=0
+		left=0 
+		player.y=player.y-1*inverted 
+	end
+	if btn(1) then
+		up=0
+		down=1
+		right=0
+		left=0  
+		player.y=player.y+1*inverted 
+	end 
+	if btn(3) then
+		up=0
+		down=0
+		right=1
+		left=0 
+		player.x=player.x+1*inverted
+	end
+	if btn(2) then
+		up=0
+		down=0
+		right=0
+		left=1
+		player.x = player.x-1*inverted
+	end
 	if(checkBounds()) then 
 		if player.x>199 then player.x=199
 		else player.x=24
@@ -121,8 +156,10 @@ end
 
 
 function shoot()
-	if btnp(4) then
+	if (btnp(4) and canShoot) then
 		creatWeapons()
+		hangerShot = true
+		canShoot = false
 	end
 end
 
@@ -149,15 +186,30 @@ function checkWeaponBoundsAndLives()
 	end
 end
 
+function drawPlayer()
+	if(left==1) then
+		spr(spriteReturn(characterSidewaysLeft,4,30,422),player.x,player.y,14,1,0,0,2,2)
+	elseif(up==1) then
+		spr(spriteReturn(characterAnimationUp, 4, 30, 295),player.x,player.y,14,1,0,0,2,2)
+	elseif(down==1) then
+		spr(spriteReturn(characterAnimationDown, 4, 30, 390),player.x,player.y,14,1,0,0,2,2)
+	elseif(right==1) then
+		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),player.x,player.y,14,1,0,0,2,2)
+	else
+		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),player.x,player.y,14,1,0,0,2,2)
+	end
+end
 
 function draw()
 
 	cls(13)
-	spr(1,player.x,player.y,14,1,0,0,2,2)
+	drawPlayer()
 	print("Hello Cabide!",85,0)
 	drawObstacles()
 	drawWeapon()
-
+	print(spammingHanger, 85, 23)
+	
+	
 end
 
 
@@ -169,7 +221,12 @@ function TIC()
 	updateWeapon()
 	draw()
 	t=t+1
-	
+	if(hangerShot) then spammingHanger = spammingHanger - 1 end 
+	if(spammingHanger == 0) then 
+		spammingHanger = 30 
+		canShoot = true
+		hangerShot = false
+	end 
 end
 
 
