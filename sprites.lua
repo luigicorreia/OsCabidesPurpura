@@ -8,7 +8,8 @@ x=96
 y=24
 
 
-
+hangerAnimation = {261,263,265,267}
+iceAnimation = {336, 339}
 
 function TIC()
 
@@ -18,15 +19,17 @@ function TIC()
 	if btn(3) then x=x+1 end
 
 	cls(0)
-	spr(261+spriteReturn(),x,y,0,1,0,0,2,2)
+	spr(spriteReturn(hangerAnimation, 4, 5),x,y,0,1,0,0,2,2)
+	spr(spriteReturn(iceAnimation, 2, 20),14,14,0,2,0,0,3,3)
+
 	print(hangerSpriteNumber,84,84,12)
 	t=t+1
 end
 
 
-function spriteReturn()
-	hangerAnimation = {0,2,4,6}
-	hangerSpriteNumber = hangerAnimation[math.ceil((t/5)%4)]
+function spriteReturn(animation, n, acceleration)
+
+	hangerSpriteNumber = animation[math.ceil((t/acceleration)%n)]
 
 	if(hangerSpriteNumber == nil) then hangerSpriteNumber = 0 end
 
@@ -58,6 +61,24 @@ end
 -- 026:2300000000000000900000000900000009000000900000000000000000000000
 -- 027:0090090200099003000000000000000000000000000000000000000000000000
 -- 028:0000300000003000300030003000300003003000030030000033000000000000
+-- 080:ddddddddddddddddddffffddddaaadddddddddddffffddddaaadddddddfffddd
+-- 081:ddafffffdddddddddddddddddddffffddddaaaddffffddddaaaddddddddddddd
+-- 082:ddddddddddddddddddffffddddaaadddddddddddffffddddaaadddddddfffddd
+-- 083:ddafffffdddaddddddaaddddddaffffdddaaaaddaaffddddaaadddaaaaaaaaad
+-- 084:ddddaddddaffffddaaaaaddddddadddddddaadddffddaaddaddddaafdddddaad
+-- 085:ddddaddddaffffddaaaaaddddddadddddddaadddffddaaddaddddaafdddddaad
+-- 096:ddaadddddddddddddddddafdddddddddddfffdddddaadddfdddddddaddddafdd
+-- 097:ddddddddddffffddddaaadddddddddddddddddddffddddddaddddfffdddddaad
+-- 098:ddaadddddddddddddddddafdddddddddddfffdddddaadddfdddddddaddddafdd
+-- 099:ddddaddddaffffddaaaaaddddddadddddddaadddffddaaddaddddaafdddddaad
+-- 100:ddafffffdddaddddddaaddddddaffffdddaaaaddaaffddddaaadddaaaaaaaaad
+-- 101:ddddaddddaffffddaaaaaddddddadddddddaadddffddaaddaddddaafdddddaad
+-- 112:ddddddddddddddddddffffddddaaadddddddddddffffddddaaadddddddfffddd
+-- 113:ddafffffdddddddddddddddddddffffddddaaaddffffddddaaaddddddddddddd
+-- 114:ddddddddddddddddddffffddddaaadddddddddddffffddddaaadddddddfffddd
+-- 115:ddafffffdddaddddddaaddddddaffffdddaaaaddaaffddddaaadddaaaaaaaaad
+-- 116:ddddaddddaffffddaaaaaddddddadddddddaadddffddaaddaddddaafdddddaad
+-- 117:ddafffffdddaddddddaaddddddaffffdddaaaaddaaffddddaaadddaaaaaaaaad
 -- </SPRITES>
 
 -- <WAVES>
