@@ -16,7 +16,7 @@ reverse=0
 
 player={
 	x=110,
-	y=85
+	y=110
 }
 
 Inventory ={
@@ -27,7 +27,7 @@ end
 
 
 function startScreen()
-	cls(0)
+	cls(13)
 	spr(1,player.x,player.y,14,1,0,0,2,2)
 	print("Hello Cabide!",85,0)
 
@@ -37,11 +37,16 @@ end
 function playerMovement()
 	if btn(3) then player.x=player.x+1*inverted end
 	if btn(2) then player.x = player.x-1*inverted end
+	if(checkBounds()) then 
+		if player.x>207 then player.x=207
+		else player.x=23
+		end
+	end
 end
 
 
 function checkBounds()
-	if(player.x<23 or player.x>215) then
+	if(player.x<23 or player.x>207) then
 		return true
 	else
 		return false
@@ -49,13 +54,9 @@ function checkBounds()
 end
 init()
 function TIC()
-	if(checkBounds()) then 
-		if player.x>215 then player.x=215
-		else player.x=23
-		end
-	end
 	startScreen()
 	playerMovement()
+	print(player.x)
 	
 	
 	
