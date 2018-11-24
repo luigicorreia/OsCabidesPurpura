@@ -11,11 +11,9 @@ y=85
 inverted=1
 
 function init()
-	obstacles={}
-	
-	for i=0, 4 do
-		obstacles[i]=createObstacle(DEFAULT_OBSTACLE_Y+i*100)
-	end
+
+	isLeftSide=true
+
 
 	gameover=false
 
@@ -30,38 +28,6 @@ function init()
 		weapon ="cabide"
 	}
 end	
-
-
-function createObstacle(yValue)
-	obstaclesTemp={}
-	for i=0, 7 do
-		obstaclesTemp[i]={x=24+24*i , y=yValue}
-	end
-
-	return obstaclesTemp
-end
-
-
-function updateObstacles()
-	for i=0, 4 do
-		for j=0, 7 do
-			if obstacles[i][j].y==260 then
-				obstacles[i][j].y=-260 --TODO
-			else
-				obstacles[i][j].y=obstacles[i][j].y+1
-			end
-		end
-	end
-end
-
-
-function drawObstacles()
-	for i=0, 4 do
-		for j=0, 7 do
-			spr(5,obstacles[i][j].x,obstacles[i][j].y,-1,3,0,0,1,1)
-		end
-	end
-end
 
 
 function playerMovement()
@@ -83,13 +49,42 @@ function checkBounds()
 	end
 end
 
+function drawReflexion()
+	for i=0, 135 do
+		for j=0, 59 do
+			memcpy(((120+j*2)+240*i)*4/8,(j*2+240*i)*4/8,2)
+		end
+	end
+end
 
+function drawCrossair()
+	mx,my,md=mouse()
+	--if md then
+		x=mx
+		y=my
+	--end
+	if md then
+		player.x = x-2
+	end
+
+	spr(0,x-2,y-2,14,1,0,0)
+end
+ 
 function draw()
 
-	cls(13)
+	cls(0)
 	spr(1,player.x,player.y,14,1,0,0,2,2)
 	print("Hello Cabide!",85,0)
-	drawObstacles()
+
+	if(player.x > 118) then
+		isLeftSide=false
+	else 
+		isLeftSide=true	
+	end
+	
+	drawCrossair()
+	--drawReflexion()
+
 
 end
 
@@ -97,8 +92,6 @@ end
 init()
 function TIC()
 	playerMovement()
-	
-	updateObstacles()
 
 	draw()
 	t=t+1
@@ -107,11 +100,12 @@ end
 
 
 -- <TILES>
+-- 000:66666eee6eee6eee6e6e6eee6eee6eee66666eeeeeeeeeeeeeeeeeeeeeeeeeee
 -- 001:efffffffff222222f8888888f8222222f8fffffff8ff0ffff8ff0ffff8ff0fff
 -- 002:fffffeee2222ffee88880fee22280feefff80fff0ff80f0f0ff80f0f0ff80f0f
 -- 003:efffffffff222222f8888888f8222222f8fffffff8fffffff8ff0ffff8ff0fff
 -- 004:fffffeee2222ffee88880fee22280feefff80ffffff80f0f0ff80f0f0ff80f0f
--- 005:4111111414444441411111148000000800000000000000000000000080000008
+-- 005:4111111414444441411111140000000000000000000000000000000000000000
 -- 017:f8fffffff8888888f888f888f8888ffff8888888f2222222ff000fffefffffef
 -- 018:fff800ff88880ffef8880fee88880fee88880fee2222ffee000ffeeeffffeeee
 -- 019:f8fffffff8888888f888f888f8888ffff8888888f2222222ff000fffefffffef
