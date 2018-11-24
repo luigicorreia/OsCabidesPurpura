@@ -15,7 +15,7 @@ function TIC()
 	if btn(3) then x=x+1 end
 
 	cls(13)
-	spr(1+t%60//30*2,x,y,14,3,0,0,2,2)
+	spr(1+t%60/30*2,x,y,14,3,0,0,2,2)
 	print("HELLO WORLD!",84,84)
 	t=t+1
 end
