@@ -238,6 +238,7 @@ function playerOwnCollision()
 			player.hp = player.hp - 10
 			if(player.hp <= 0) then
 				gameState=5
+				tFinal=math.ceil(t/60) 
 			end
 			if(weaponInUsage.lives>0) then
 				weaponInUsage.lives = weaponInUsage.lives - 1
