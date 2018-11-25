@@ -56,6 +56,30 @@ function init()
 
 end	
 
+function begin()
+
+	print("One day, little Mac woke up and said 'Oh Shit! My wardrobe is alive !' He instantly grabed the first thing he had next to him. Hangers!", 80, 80);
+end
+
+function tutorial()
+	print("Tutorial:")
+
+	--print("Left arrow - Move LEFT",,)
+	--print("Right arrow - Move RIGHT",,)
+	--print("Up arrow - Move UP",,)
+	--print("Down arrow - Move Down",,)
+	--print("Button Z - Throw a hanger",,)
+end
+
+function credits()
+	--print("Game made by:",,)
+	--print("João Seixas ",,)
+	--print("Luís Correia ",,)
+	--print("Pedro Sousa",,)
+	--print("Ventura Pereira ",,)
+	--print("Vicente Espinha",,)
+end
+
 
 function spriteReturn(animation, n, acceleration, n0)
 
@@ -65,8 +89,6 @@ function spriteReturn(animation, n, acceleration, n0)
 		hangerSpriteNumber = n0
 	end
 	
-		
-
 	return hangerSpriteNumber
 end
 
