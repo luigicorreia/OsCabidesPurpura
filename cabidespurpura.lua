@@ -147,15 +147,33 @@ function credits()
 	if(mouseVars.pressed) then gameState = 0 end
 end
 
+function changeDir(object)
+	if object.isStepX then
+		if object.dx > 0 then
+			object.dx = 0-object.dx
+		else
+			object.dx = math.abs(object.dx)
+		end
+	else
+		if object.dy > 0 then
+			object.dy = 0-object.dy
+		else
+			object.dy = math.abs(object.dy)
+		end
+	end
+end
+
 
 function collision()
 	
 	for id, weaponInUsage in pairs(weapon) do
 		for id2, badFurniture in pairs(furniture) do
-			if((math.ceil(weaponInUsage.x)<=badFurniture.x+badFurniture.width and math.ceil(weaponInUsage.x)>=badFurniture.x-badFurniture.width) and (math.ceil(weaponInUsage.y)<=badFurniture.y+badFurniture.heigth and math.ceil(weaponInUsage.y)>=badFurniture.y-badFurniture.heigth)) then
+			if((math.ceil(weaponInUsage.x)<=badFurniture.x+badFurniture.width and math.ceil(weaponInUsage.x)>=badFurniture.x-badFurniture.width) 
+			and (math.ceil(weaponInUsage.y)<=badFurniture.y+badFurniture.heigth and math.ceil(weaponInUsage.y)>=badFurniture.y-badFurniture.heigth)) then
 				
 				if(weaponInUsage.lives >0) then 
 					weaponInUsage.lives=weaponInUsage.lives-1
+					changeDir(weaponInUsage)
 				else
 					table.remove(weapon,id)
 				end
@@ -169,7 +187,8 @@ end
 
 function playerCollision()
 	for id, badFurniture in pairs(furniture) do
-		if((math.ceil(player.x)<=badFurniture.x+badFurniture.width and math.ceil(player.x)>=badFurniture.x-badFurniture.width) and (math.ceil(player.y)<=badFurniture.y+badFurniture.heigth and math.ceil(player.y)>=badFurniture.y-badFurniture.heigth)) then
+		if((math.ceil(player.x)<=badFurniture.x+badFurniture.width and math.ceil(player.x)>=badFurniture.x-badFurniture.width) 
+		and (math.ceil(player.y)<=badFurniture.y+badFurniture.heigth and math.ceil(player.y)>=badFurniture.y-badFurniture.heigth)) then
 			if player.hp > 0 then 
 				if(canHit) then 
 					player.hp  = player.hp - 20
@@ -253,7 +272,14 @@ end
 function createWeapons(lastX,lastY)
 	dx=lastX-player.x
 	dy=lastY-player.y
-	if math.abs(dx) >= math.abs(dy) then step = math.abs(dx) else step = math.abs(dy) end
+	if math.abs(dx) >= math.abs(dy) then 
+		step = math.abs(dx)  
+		boolTemp = true
+	else 
+		step = math.abs(dy) 
+		boolTemp = false
+	end
+	
 	local newWeapon={
 		x=player.x,
 		y=player.y-5,
@@ -261,9 +287,9 @@ function createWeapons(lastX,lastY)
 		destY=lastY,
 		dx = dx/step,
 		dy= dy/step,
+		isStepX=boolTemp,
 		lives=2
 		
-
 	}
 	
 	table.insert(weapon,#weapon+1,newWeapon)
@@ -272,7 +298,6 @@ end
 
 function shoot()
 	if (mouseVars.pressed and canShoot) then
-		--m = calculateIncrement(mouseVars.y,mouseVars.x)
 		
 		createWeapons(mouseVars.x,mouseVars.y)
 		hangerShot = true
@@ -306,7 +331,26 @@ end
 
 function checkWeaponBoundsAndLives()
 	for id, eachWeapon in pairs(weapon) do
-		if(eachWeapon.y < 0 or eachWeapon.lives==0) then
+
+		if eachWeapon.y <= BORDER_TOP then
+			eachWeapon.y = BORDER_TOP + 1
+			eachWeapon.lives = eachWeapon.lives - 1
+			changeDir(eachWeapon)
+		
+		elseif eachWeapon.y >= BORDER_BOT then
+			eachWeapon.y = BORDER_BOT - 1
+			eachWeapon.lives = eachWeapon.lives - 1
+			changeDir(eachWeapon)
+		
+		elseif eachWeapon.x >= BORDER_RIGHT then
+			eachWeapon.x = BORDER_RIGHT - 1
+			eachWeapon.lives = eachWeapon.lives - 1
+			changeDir(eachWeapon)
+		elseif eachWeapon.x <= BORDER_LEFT then
+			eachWeapon.x = BORDER_LEFT + 1
+			eachWeapon.lives = eachWeapon.lives - 1
+			changeDir(eachWeapon)
+		elseif eachWeapon.lives<=0 then
 			table.remove(weapon,id)
 		end
 	end
