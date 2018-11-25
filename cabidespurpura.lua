@@ -49,7 +49,9 @@ function init()
 	mouseVars ={
 		x = 0,
 		y=0,
-		pressed=false
+		pressedLeft=false,
+		pressedMiddle=false,
+		pressedRight=false
 	}
 	
 
@@ -99,7 +101,7 @@ function begin()
 		print("he had next to him. Hangers!",20,110)
 		
 
-	if(mouseVars.pressed) then gameState = 2 end
+	if(mouseVars.pressedLeft) then gameState = 2 t=0 end
 
 	return
 
@@ -171,7 +173,9 @@ function credits()
 
 	map(00,00,30,17)
 
-	print("Game made by:",20,30)
+	print("Game made by",20,30)
+	print("'Os Cabides Purpura'", 95,30,2)
+	print(":", 210,30)
 	print("Joao Seixas ",30,50)
 	print("Luis Correia ",30,60)
 	print("Pedro Sousa",30,70)
@@ -197,9 +201,9 @@ function score()
 	print(tFinal,55,50)
 	print("seconds", 75, 50)
 
-	print("Press DOWN to return to menu",60,110)
+	print("RIGHT CLICK to return to menu",60,110)
 
-	if(btn(1)) then canPlayMusic = true reset() end
+	if(mouseVars.pressedRight) then canPlayMusic = true reset() end
 
 end
 
@@ -255,7 +259,7 @@ function playerCollision()
 				end
 			else
 				gameState=5
-				tFinal = math.ceil(t/60)
+				tFinal = t//60
 			end
 		end
 	end
@@ -263,14 +267,14 @@ end
 
 function playerOwnCollision()
 	for id, weaponInUsage in pairs(weapon) do
-		print(player.x,80,20)
-		print(math.ceil(weaponInUsage.x),100,20)
+		
 		if(math.ceil( player.x )-8 <= math.ceil(weaponInUsage.x) and math.ceil( player.x )+8 >= math.ceil(weaponInUsage.x) 
 		and math.ceil(player.y)+8 >= math.ceil(weaponInUsage.y)  and math.ceil(player.y)-8 <= math.ceil(weaponInUsage.y)) then
 			sfx(22)
 			player.hp = player.hp - 10
 			if(player.hp <= 0) then
 				gameState=5
+				tFinal=t//60 
 			end
 			if(weaponInUsage.lives>0) then
 				weaponInUsage.lives = weaponInUsage.lives - 1
@@ -397,7 +401,7 @@ end
 
 
 function shoot()
-	if (mouseVars.pressed and canShoot) then
+	if (mouseVars.pressedLeft and canShoot) then
 		
 		createWeapons(mouseVars.x,mouseVars.y)
 		hangerShot = true
@@ -478,7 +482,7 @@ end
 
 
 function updateMouse()
-	mouseVars.x,mouseVars.y,mouseVars.pressed=mouse()
+	mouseVars.x,mouseVars.y,mouseVars.pressedLeft, mouseVars.pressedMiddle, mouseVars.pressedRight=mouse()
 end
 
 
@@ -676,7 +680,6 @@ function game()
 		canPlayMusic = false
 	end
 
-	print(furniture, 84, 84)
 	position(player)
 	playerMovement()
 	positionFurniture()
@@ -693,8 +696,7 @@ function game()
 	print("HP : ",2,2)
 	print(player.hp, 25,2)
 	print("TIME : ", 45, 2)
-	print(math.ceil(t/60), 70, 2)
-	--print(frequency, 34, 2)
+	print(t//60, 75, 2)
 
 
 	t=t+1
