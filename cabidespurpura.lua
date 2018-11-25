@@ -78,7 +78,7 @@ function tutorial()
 	--print("Right arrow - Move RIGHT",,)
 	--print("Up arrow - Move UP",,)
 	--print("Down arrow - Move Down",,)
-	--print("Button Z - Throw a hanger",,)
+	--print("Right Button - Throw a hanger",,)
 end
 
 function credits()
