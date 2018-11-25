@@ -27,7 +27,7 @@ characterSidewaysRight = {454,456,458,460}
 characterAnimationDown = {390,392,394,396}
 wardrobeAnimation = {384, 387}
 drawerAnimation = {432, 435}
-spammingHanger = 30
+spammingHanger = 40
 hangerShot = false
 canShoot = true
 
@@ -125,6 +125,11 @@ function collision()
 	
 	for id, weaponInUsage in pairs(weapon) do
 		for id2, badFurniture in pairs(furniture) do
+<<<<<<< HEAD
+=======
+			--print(math.ceil(weaponInUsage.y),80,20)
+			--print(badFurniture.y,110,20)
+>>>>>>> d5f5ec0703936893b4588e8db5f0931ca4d3a447
 			if((math.ceil(weaponInUsage.x)<=badFurniture.x+badFurniture.width and math.ceil(weaponInUsage.x)>=badFurniture.x-badFurniture.width) and (math.ceil(weaponInUsage.y)<=badFurniture.y+badFurniture.heigth and math.ceil(weaponInUsage.y)>=badFurniture.y-badFurniture.heigth)) then
 				print("hit!", 150,20)
 				table.remove(furniture, id2)
@@ -253,11 +258,11 @@ function drawWeapon()
 	
 	for id,eachWeapon in pairs(weapon) do
 		if eachWeapon.x < midPosLeft and player.isLeftSide then
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-24-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 3, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 3, hangern0),239-24-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
 		elseif (eachWeapon.x > midPosRight and not player.isLeftSide) then
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-8-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 3, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 3, hangern0),239-8-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
 		end
 	end
 end
@@ -341,19 +346,20 @@ function createFurniture()
 	else
 		type_t = "drawer"
 	end
+
+	yPos = math.random(12, 100)
 	
 
 	local newFurniture={
 		x=12+(choice*200),
-		y=12,
+		y=yPos,
 		width=16,
 		heigth=16,
 		type = type_t,
 		isLeftSide = true,
-		side = choice
 	}
 
-	if(t/40%4 == 0) then
+	if(t/40%6 == 0) then
 		table.insert(furniture,#furniture+1,newFurniture)
 	end
 
@@ -361,10 +367,18 @@ end
 
 function updateFurniture()
 	for id, eachPiece in pairs(furniture) do
-		if(eachPiece.side == 0) then
-			eachPiece.x = eachPiece.x+1
-		else
-			eachPiece.x = eachPiece.x-1
+		if(eachPiece.x > player.x and eachPiece.y > player.y) then
+			eachPiece.x = eachPiece.x-0.2
+			eachPiece.y = eachPiece.y-0.2
+		elseif(eachPiece.x < player.x and eachPiece.y < player.y) then
+			eachPiece.x = eachPiece.x+0.2
+			eachPiece.y = eachPiece.y+0.2
+		elseif(eachPiece.x > player.x and eachPiece.y < player.y) then
+			eachPiece.x = eachPiece.x-0.2
+			eachPiece.y = eachPiece.y+0.2
+		elseif(eachPiece.x < player.x and eachPiece.y > player.y) then
+			eachPiece.x = eachPiece.x+0.2
+			eachPiece.y = eachPiece.y-0.2
 		end
 		drawFurniture()
 	end
@@ -429,7 +443,7 @@ function game()
 	
 	if(hangerShot) then spammingHanger = spammingHanger - 1 end 
 	if(spammingHanger == 0) then 
-		spammingHanger = 30 
+		spammingHanger = 40 
 		canShoot = true
 		hangerShot = false
 	end 
@@ -438,7 +452,7 @@ function game()
 		createFurniture()
 	end
 	
-	print(player.x, 84, 84)
+	--print(player.x, 84, 84)
 	--if(mouseVars.pressed) then gameState = 3 end
 
 end 
