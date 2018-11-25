@@ -125,14 +125,17 @@ function collision()
 	
 	for id, weaponInUsage in pairs(weapon) do
 		for id2, badFurniture in pairs(furniture) do
-			print(math.ceil(weaponInUsage.y),80,20)
-			print(badFurniture.y,110,20)
 			if((math.ceil(weaponInUsage.x)<=badFurniture.x+badFurniture.width and math.ceil(weaponInUsage.x)>=badFurniture.x-badFurniture.width) and (math.ceil(weaponInUsage.y)<=badFurniture.y+badFurniture.heigth and math.ceil(weaponInUsage.y)>=badFurniture.y-badFurniture.heigth)) then
 				print("hit!", 150,20)
 				table.remove(furniture, id2)
 			end
 		end
 	end
+
+end
+
+function playerCollision()
+	for id, badFurniture in pairs(furniture) do
 
 end
 
