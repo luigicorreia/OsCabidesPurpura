@@ -3,7 +3,10 @@
 -- desc:   lança cruzetas
 -- script: lua
 
-DEFAULT_OBSTACLE_Y=-460
+BORDER_LEFT=5
+BORDER_RIGHT=218
+BORDER_TOP=1
+BORDER_BOT=118
 
 t=0
 x=110
@@ -47,6 +50,8 @@ function init()
 
 	weapon={}
 
+	furniture={}
+
 
 	gameover=false
 
@@ -54,7 +59,8 @@ function init()
 
 	player={
 		x=110,
-		y=110
+		y=110,
+		isLeftSide = true
 	}
 
 
@@ -107,31 +113,27 @@ function playerMovement()
 		left=1
 		player.x = player.x-1*inverted
 	end
-	if(checkBounds()) then 
-		if player.x>199 then player.x=199
-		else player.x=24
-		end
-	end
+	checkBounds()
+
 end
 
 
 function checkBounds()
-	if(player.x<24 or player.x>199) then
-		return true
-	else
-		return false
+	if player.x < BORDER_LEFT then
+		player.x = BORDER_LEFT
+	end
+	if player.x > BORDER_RIGHT then
+		player.x = BORDER_RIGHT
+	end
+	if player.y < BORDER_TOP then
+		player.y = BORDER_TOP
+	end
+	if player.y > BORDER_BOT then
+		player.y = BORDER_BOT
 	end
 end
 
-function drawReflexion()
-	for i=0, 135 do
-		for j=0, 59 do
-			memcpy(((120+j*2)+240*i)*4/8,(j*2+240*i)*4/8,2)
-		end
-	end
-end
-
-function creatWeapons(lastX,lastY)
+function createWeapons(lastX,lastY)
 	dx=lastX-player.x
 	dy=lastY-player.y
 	if math.abs(dx) >= math.abs(dy) then step = math.abs(dx) else step = math.abs(dy) end
@@ -158,7 +160,7 @@ function shoot()
 	if (mouseVars.pressed and canShoot) then
 		--m = calculateIncrement(mouseVars.y,mouseVars.x)
 		
-		creatWeapons(mouseVars.x,mouseVars.y)
+		createWeapons(mouseVars.x,mouseVars.y)
 		hangerShot = true
 		canShoot = false
 	end
@@ -177,15 +179,12 @@ function drawWeapon()
 	checkWeaponBoundsAndLives()
 	
 	for id,eachWeapon in pairs(weapon) do
-		
-		if eachWeapon.x < midPosLeft and isLeftSide then
-			
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,0,1,0,0,2,2)
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-24-eachWeapon.x,eachWeapon.y,0,1,0,2,2,2)
-		elseif (eachWeapon.x > midPosRight and not isLeftSide) then
-			
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,0,1,0,0,2,2)
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-8-eachWeapon.x,eachWeapon.y,0,1,0,2,2,2)
+		if eachWeapon.x < midPosLeft and player.isLeftSide then
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-24-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
+		elseif (eachWeapon.x > midPosRight and not player.isLeftSide) then
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-8-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
 		end
 	end
 end
@@ -199,25 +198,26 @@ function checkWeaponBoundsAndLives()
 	end
 end
 
+
 function drawPlayer()
 	if(left==1) then
 		spr(spriteReturn(characterSidewaysLeft,4,30,422),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterSidewaysLeft,4,30,422),239-16-player.x,player.y,14,1,1,0,2,2)
 	elseif(up==1) then
 		spr(spriteReturn(characterAnimationUp, 4, 30, 295),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterAnimationUp, 4, 30, 295),239-16-player.x,player.y,14,1,1,0,2,2)
 	elseif(down==1) then
 		spr(spriteReturn(characterAnimationDown, 4, 30, 390),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterAnimationDown, 4, 30, 390),239-16-player.x,player.y,14,1,1,0,2,2)
 	elseif(right==1) then
 		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),239-16-player.x,player.y,14,1,1,0,2,2)
 	else
 		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),239-16-player.x,player.y,14,1,1,0,2,2)
 	end
 end
 
-function calculateIncrement(my,mx)
-	
-	m = (my - player.y)/mx
-	return m
-end
 function drawCrossair()
 	mouseVars.x,mouseVars.y,mouseVars.pressed=mouse()
 	--line(player.x,player.y,mx,my,0)
@@ -237,23 +237,79 @@ function drawRightSide()
 	map(120, 0, 15,7,15,7,1)
 end 
 
-function playerPos()
-	if player.x >= midPosLeft and isLeftSide then
-		isLeftSide = false
-		if player.x < midPosRight then
-			player.x = midPosRight + 1
+function position(object)
+	if object.x >= midPosLeft and object.isLeftSide then
+		object.isLeftSide = false
+		if object.x < midPosRight then
+			object.x = midPosRight + 1
 		end
-	elseif player.x <= midPosRight and not isLeftSide then
-		isLeftSide = true
-		if player.x > midPosLeft then
-			player.x = midPosLeft - 1
+	elseif object.x <= midPosRight and not object.isLeftSide then
+		object.isLeftSide = true
+		if object.x > midPosLeft then
+			object.x = midPosLeft - 1 
 		end
 	end
 end
 
-function drawPlayer()
-	spr(1,player.x,player.y,14,1,0,0,2,2)
-	spr(1,239-24-player.x,player.y,14,1,0,2,2,2)
+
+
+
+function createFurniture()
+
+	type_t = ""
+
+	local choice = math.ceil(math.random(0,1))
+
+	if(choice == 0) then 
+		type_t = "wardrobe"
+	else
+		type_t = "drawer"
+	end
+	
+
+	local newFurniture={
+		x=12+(choice*200),
+		y=12,
+		type = type_t,
+		isLeftSide = true,
+		side = choice
+	}
+
+	if(t/40%4 == 0) then
+		table.insert(furniture,#furniture+1,newFurniture)
+	end
+
+end
+
+function updateFurniture()
+	for id, eachPiece in pairs(furniture) do
+		if(eachPiece.side == 0) then
+			eachPiece.x = eachPiece.x+1
+		else
+			eachPiece.x = eachPiece.x-1
+		end
+		drawFurniture()
+	end
+
+end
+
+function positionFurniture()
+	for id, eachPiece in pairs(furniture) do
+		position(eachPiece)
+	end
+end
+
+
+function drawFurniture()
+
+	
+	for id,eachPiece in pairs(furniture) do
+		if(eachPiece.type == "wardrobe") then
+			spr(spriteReturn(wardrobeAnimation, 2, 12, 384),eachPiece.x,eachPiece.y,14,1,0,0,3,3)
+		elseif (eachPiece.type == "drawer") then
+			spr(spriteReturn(drawerAnimation, 2, 15, 432),eachPiece.x,eachPiece.y,14,1,0,0,3,2)
+		end
+	end
 end
 
 function draw()
@@ -263,7 +319,6 @@ function draw()
 	map(30,18,30,17)
 	
 	drawPlayer()
-	print("Hello Cabide!",85,0)
 
 	-- if(player.x > 118) then
 	-- 	isLeftSide=false
@@ -273,7 +328,7 @@ function draw()
 	
 	--drawRightSide()
 	--drawReflexion()
-	
+	drawFurniture()
 	drawWeapon()
 	drawCrossair()
 
@@ -282,12 +337,18 @@ end
 
 init()
 function TIC()
+	print(furniture, 84, 84)
 	playerMovement()
-	playerPos()
+
+	position(player)
+	
+	positionFurniture()
+	shoot()
 
 	updateWeapon()
+	updateFurniture()
 	draw()
-	shoot()
+
 	
 	t=t+1
 
@@ -297,6 +358,14 @@ function TIC()
 		canShoot = true
 		hangerShot = false
 	end 
+
+	if(t/40%4 == 0) then
+		createFurniture()
+	end
+
+	print(player.x, 84, 84)
+	
+
 end
 
 
