@@ -61,6 +61,7 @@ function init()
 	player={
 		x=50,
 		y=110,
+		hp=100,
 		isLeftSide = true
 	}
 
@@ -125,15 +126,31 @@ function collision()
 	
 	for id, weaponInUsage in pairs(weapon) do
 		for id2, badFurniture in pairs(furniture) do
-			--print(math.ceil(weaponInUsage.y),80,20)
-			--print(badFurniture.y,110,20)
 			if((math.ceil(weaponInUsage.x)<=badFurniture.x+badFurniture.width and math.ceil(weaponInUsage.x)>=badFurniture.x-badFurniture.width) and (math.ceil(weaponInUsage.y)<=badFurniture.y+badFurniture.heigth and math.ceil(weaponInUsage.y)>=badFurniture.y-badFurniture.heigth)) then
-				print("hit!", 150,20)
+				
+				if(weaponInUsage.lives >0) then 
+					weaponInUsage.lives=weaponInUsage-1
+				else
+					table.remove(weapon,id)
+				end
 				table.remove(furniture, id2)
+				
 			end
 		end
 	end
 
+end
+
+function playerCollision()
+	for id, badFurniture in pairs(furniture) do
+		if((math.ceil(player.x)<=badFurniture.x+badFurniture.width and math.ceil(player.x)>=badFurniture.x-badFurniture.width) and (math.ceil(player.y)<=badFurniture.y+badFurniture.heigth and math.ceil(player.y)>=badFurniture.y-badFurniture.heigth)) then
+			if player.hp > 0 then 
+				player.hp  = player.hp -1
+			else
+				gameState=3
+			end
+		end
+	end
 end
 
 
@@ -485,10 +502,12 @@ function game()
 	playerMovement()
 	positionFurniture()
 	shoot()
+	collision()
+	playerCollision()
 	updateWeapon()
 	updateFurniture()
 	draw()
-	collision()
+	
 
 
 	t=t+1
