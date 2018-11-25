@@ -30,6 +30,7 @@ canShoot = true
 
 
 
+
 midPosLeft = 107
 midPosRight = 123
 
@@ -37,6 +38,11 @@ function init()
 
 	isLeftSide=true
 
+	mouseVars ={
+		x = 0,
+		y=0,
+		pressed=false
+	}
 	
 
 	weapon={}
@@ -124,38 +130,60 @@ function drawReflexion()
 		end
 	end
 end
-function creatWeapons()
+
+function creatWeapons(lastX,lastY)
+	dx=lastX-player.x
+	dy=lastY-player.y
+	if math.abs(dx) >= math.abs(dy) then step = math.abs(dx) else step = math.abs(dy) end
 	local newWeapon={
 		x=player.x,
 		y=player.y-5,
+		destX=lastX,
+		destY=lastY,
+		dx = dx/step,
+		dy= dy/step,
 		lives=2
+		
+
 	}
+	
 	table.insert(weapon,#weapon+1,newWeapon)
 end
 
 
 function shoot()
-	if (btnp(4) and canShoot) then
-		creatWeapons()
+	
+	
+	
+	if (mouseVars.pressed and canShoot) then
+		--m = calculateIncrement(mouseVars.y,mouseVars.x)
+		
+		creatWeapons(mouseVars.x,mouseVars.y)
 		hangerShot = true
 		canShoot = false
 	end
 end
 
 function updateWeapon()
+	
 	for id, eachWeapon in pairs(weapon) do
-		eachWeapon.y = eachWeapon.y-1
+		eachWeapon.x=eachWeapon.x + eachWeapon.dx
+		eachWeapon.y=eachWeapon.y + eachWeapon.dy
 		drawWeapon()
 	end
 end
 
 function drawWeapon()
 	checkWeaponBoundsAndLives()
+	
 	for id,eachWeapon in pairs(weapon) do
+		
 		if eachWeapon.x < midPosLeft and isLeftSide then
+			
 			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,0,1,0,0,2,2)
 			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-24-eachWeapon.x,eachWeapon.y,0,1,0,2,2,2)
 		elseif (eachWeapon.x > midPosRight and not isLeftSide) then
+			
 			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,0,1,0,0,2,2)
 			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-8-eachWeapon.x,eachWeapon.y,0,1,0,2,2,2)
 		end
@@ -185,11 +213,18 @@ function drawPlayer()
 	end
 end
 
+function calculateIncrement(my,mx)
+	
+	m = (my - player.y)/mx
+	return m
+end
 function drawCrossair()
-	mx,my,md=mouse()
-	line(player.x,player.y,mx,my,0)
-	spr(256,mx-2,my-2,14,1,0,0)
-	spr(256,239-2-mx,my-2,14,1,0,0)
+	mouseVars.x,mouseVars.y,mouseVars.pressed=mouse()
+	--line(player.x,player.y,mx,my,0)
+	
+	spr(256,mouseVars.x-2,mouseVars.y-2,14,1,0,0)
+	spr(256,239-2-mouseVars.x,mouseVars.y-2,14,1,0,0)
+	
 end
 
 function drawRightSide()
@@ -249,11 +284,13 @@ init()
 function TIC()
 	playerMovement()
 	playerPos()
-	shoot()
 
 	updateWeapon()
 	draw()
+	shoot()
+	
 	t=t+1
+
 	if(hangerShot) then spammingHanger = spammingHanger - 1 end 
 	if(spammingHanger == 0) then 
 		spammingHanger = 30 
