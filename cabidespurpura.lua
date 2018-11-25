@@ -320,14 +320,15 @@ function createFurniture()
 	else
 		type_t = "drawer"
 	end
+
+	yPos = math.random(12, 100)
 	
 
 	local newFurniture={
 		x=12+(choice*200),
-		y=12,
+		y=yPos,
 		type = type_t,
 		isLeftSide = true,
-		side = choice
 	}
 
 	if(t/40%4 == 0) then
@@ -338,10 +339,18 @@ end
 
 function updateFurniture()
 	for id, eachPiece in pairs(furniture) do
-		if(eachPiece.side == 0) then
-			eachPiece.x = eachPiece.x+1
-		else
-			eachPiece.x = eachPiece.x-1
+		if(eachPiece.x > player.x and eachPiece.y > player.y) then
+			eachPiece.x = eachPiece.x-0.2
+			eachPiece.y = eachPiece.y-0.2
+		elseif(eachPiece.x < player.x and eachPiece.y < player.y) then
+			eachPiece.x = eachPiece.x+0.2
+			eachPiece.y = eachPiece.y+0.2
+		elseif(eachPiece.x > player.x and eachPiece.y < player.y) then
+			eachPiece.x = eachPiece.x-0.2
+			eachPiece.y = eachPiece.y+0.2
+		elseif(eachPiece.x < player.x and eachPiece.y > player.y) then
+			eachPiece.x = eachPiece.x+0.2
+			eachPiece.y = eachPiece.y-0.2
 		end
 		drawFurniture()
 	end
