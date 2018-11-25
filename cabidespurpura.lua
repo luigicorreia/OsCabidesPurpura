@@ -190,16 +190,9 @@ end
 
 function drawCrossair()
 	mx,my,md=mouse()
-	--if md then
-		x=mx
-		y=my
-	--end
-	if md then
-		player.x = x-2
-	end
-
-	spr(256,x-2,y-2,14,1,0,0)
-	spr(256,239-2-x,y-2,14,1,0,0)
+	line(player.x,player.y,mx,my,0)
+	spr(256,mx-2,my-2,14,1,0,0)
+	spr(256,239-2-mx,my-2,14,1,0,0)
 end
 
 function drawRightSide()
