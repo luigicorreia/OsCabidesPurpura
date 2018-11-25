@@ -27,7 +27,7 @@ characterSidewaysRight = {454,456,458,460}
 characterAnimationDown = {390,392,394,396}
 wardrobeAnimation = {384, 387}
 drawerAnimation = {432, 435}
-spammingHanger = 30
+spammingHanger = 40
 hangerShot = false
 canShoot = true
 
@@ -39,7 +39,7 @@ midPosRight = 123
 
 function init()
 	
-	gameState = 2
+	gameState = 0
 	isLeftSide=true
 
 	mouseVars ={
@@ -121,6 +121,24 @@ function credits()
 end
 
 
+function collision()
+	
+	for id, weaponInUsage in pairs(weapon) do
+		for id2, badFurniture in pairs(furniture) do
+			--print(math.ceil(weaponInUsage.y),80,20)
+			--print(badFurniture.y,110,20)
+			if((math.ceil(weaponInUsage.x)<=badFurniture.x+badFurniture.width and math.ceil(weaponInUsage.x)>=badFurniture.x-badFurniture.width) and (math.ceil(weaponInUsage.y)<=badFurniture.y+badFurniture.heigth and math.ceil(weaponInUsage.y)>=badFurniture.y-badFurniture.heigth)) then
+				print("hit!", 150,20)
+				table.remove(furniture, id2)
+			end
+		end
+	end
+
+end
+
+
+
+
 function spriteReturn(animation, n, acceleration, n0)
 
 	hangerSpriteNumber = animation[math.ceil((t/acceleration)%n)]
@@ -151,14 +169,14 @@ function playerMovement()
 		left=0  
 		player.y=player.y+1*inverted 
 	end 
-	if btn(3) then
+	if btn(3)  then
 		up=0
 		down=0
 		right=1
 		left=0 
 		player.x=player.x+1*inverted
 	end
-	if btn(2) then
+	if btn(2)  then
 		up=0
 		down=0
 		right=0
@@ -232,11 +250,11 @@ function drawWeapon()
 	
 	for id,eachWeapon in pairs(weapon) do
 		if eachWeapon.x < midPosLeft and player.isLeftSide then
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-24-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 3, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 3, hangern0),239-24-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
 		elseif (eachWeapon.x > midPosRight and not player.isLeftSide) then
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-8-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 3, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 3, hangern0),239-8-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
 		end
 	end
 end
@@ -327,11 +345,13 @@ function createFurniture()
 	local newFurniture={
 		x=12+(choice*200),
 		y=yPos,
+		width=16,
+		heigth=16,
 		type = type_t,
 		isLeftSide = true,
 	}
 
-	if(t/40%4 == 0) then
+	if(t/40%6 == 0) then
 		table.insert(furniture,#furniture+1,newFurniture)
 	end
 
@@ -381,7 +401,6 @@ function draw()
 	cls(0)
 	
 	map(30,18,30,17)
-	
 	drawPlayer()
 
 	-- if(player.x > 118) then
@@ -402,22 +421,21 @@ end
 function game()
 	
 	print(furniture, 84, 84)
-	playerMovement()
-	
 	position(player)
-	
+	playerMovement()
 	positionFurniture()
 	shoot()
-	
 	updateWeapon()
 	updateFurniture()
 	draw()
+	collision()
+
 
 	t=t+1
 	
 	if(hangerShot) then spammingHanger = spammingHanger - 1 end 
 	if(spammingHanger == 0) then 
-		spammingHanger = 30 
+		spammingHanger = 40 
 		canShoot = true
 		hangerShot = false
 	end 
@@ -426,7 +444,7 @@ function game()
 		createFurniture()
 	end
 	
-	print(player.x, 84, 84)
+	--print(player.x, 84, 84)
 	--if(mouseVars.pressed) then gameState = 3 end
 
 end 
