@@ -98,7 +98,7 @@ function begin()
 		print("he had next to him. Hangers!",20,110)
 		
 
-	if(mouseVars.pressed) then gameState = 2 end
+	if(mouseVars.pressed) then gameState = 2 t=0 end
 
 	return
 
@@ -240,7 +240,7 @@ function playerCollision()
 				end
 			else
 				gameState=5
-				tFinal = math.ceil(t/60)
+				tFinal = t//60
 			end
 		end
 	end
@@ -248,13 +248,11 @@ end
 
 function playerOwnCollision()
 	for id, weaponInUsage in pairs(weapon) do
-		print(player.x,80,20)
-		print(math.ceil(weaponInUsage.x),100,20)
 		if(math.ceil( player.x )-8 <= math.ceil(weaponInUsage.x) and math.ceil( player.x )+8 >= math.ceil(weaponInUsage.x) and math.ceil(player.y)+8 >= math.ceil(weaponInUsage.y)  and math.ceil(player.y)-8 <= math.ceil(weaponInUsage.y)) then
 			player.hp = player.hp - 10
 			if(player.hp <= 0) then
 				gameState=5
-				tFinal=math.ceil(t/60) 
+				tFinal=t//60 
 			end
 			if(weaponInUsage.lives>0) then
 				weaponInUsage.lives = weaponInUsage.lives - 1
@@ -660,7 +658,7 @@ function game()
 	print("HP : ",2,2)
 	print(player.hp, 25,2)
 	print("TIME : ", 45, 2)
-	print(math.ceil(t/60), 70, 2)
+	print(t//60, 75, 2)
 	--print(frequency, 34, 2)
 
 
