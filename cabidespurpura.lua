@@ -41,6 +41,8 @@ function init()
 
 	weapon={}
 
+	furniture={}
+
 
 	gameover=false
 
@@ -124,7 +126,7 @@ function drawReflexion()
 		end
 	end
 end
-function creatWeapons()
+function createWeapons()
 	local newWeapon={
 		x=player.x,
 		y=player.y-5,
@@ -136,7 +138,7 @@ end
 
 function shoot()
 	if (btnp(4) and canShoot) then
-		creatWeapons()
+		createWeapons()
 		hangerShot = true
 		canShoot = false
 	end
@@ -145,7 +147,6 @@ end
 function updateWeapon()
 	for id, eachWeapon in pairs(weapon) do
 		eachWeapon.y = eachWeapon.y-1
-		drawWeapon()
 	end
 end
 
@@ -171,6 +172,7 @@ function checkWeaponBoundsAndLives()
 	end
 end
 
+
 function drawPlayer()
 	if(left==1) then
 		spr(spriteReturn(characterSidewaysLeft,4,30,422),player.x,player.y,14,1,0,0,2,2)
@@ -184,6 +186,7 @@ function drawPlayer()
 		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),player.x,player.y,14,1,0,0,2,2)
 	end
 end
+
 
 function drawCrossair()
 	mx,my,md=mouse()
@@ -209,33 +212,84 @@ function drawRightSide()
 	map(120, 0, 15,7,15,7,1)
 end 
 
-function playerPos()
-	if player.x >= midPosLeft and isLeftSide then
+function position(object)
+	if object.x >= midPosLeft and isLeftSide then
 		isLeftSide = false
-		if player.x < midPosRight then
-			player.x = midPosRight + 1
+		if object.x < midPosRight then
+			object.x = midPosRight + 1
 		end
-	elseif player.x <= midPosRight and not isLeftSide then
+	elseif object.x <= midPosRight and not isLeftSide then
 		isLeftSide = true
-		if player.x > midPosLeft then
-			player.x = midPosLeft - 1
+		if object.x > midPosLeft then
+			object.x = midPosLeft - 1 
 		end
 	end
 end
 
 function drawPlayer()
-	spr(1,player.x,player.y,14,1,0,0,2,2)
-	spr(1,239-24-player.x,player.y,14,1,0,2,2,2)
+	spr(289,player.x,player.y,14,1,0,0,2,2)
+	--spr(1,239-24-player.x,player.y,14,1,0,2,2,2)
+end
+
+function createFurniture()
+
+	type_t = ""
+
+	local choice = math.ceil(math.random(0,1))
+
+	if(choice == 0) then 
+		type_t = "wardrobe"
+	else
+		type_t = "drawer"
+	end
+	
+
+	local newFurniture={
+		x=12,
+		y=12,
+		type = type_t
+	}
+
+	if(t/40%4 == 0) then
+		table.insert(furniture,#furniture+1,newFurniture)
+	end
+
+end
+
+function updateFurniture()
+	for id, eachPiece in pairs(furniture) do
+		eachPiece.x = eachPiece.x+1
+		drawFurniture()
+	end
+
+end
+
+function positionFurniture()
+	for id, eachPiece in pairs(furniture) do
+		position(eachPiece)
+	end
+end
+
+
+function drawFurniture()
+
+	
+	for id,eachPiece in pairs(furniture) do
+		if(eachPiece.type == "wardrobe") then
+			spr(spriteReturn(wardrobeAnimation, 2, 12, 384),eachPiece.x,eachPiece.y,14,1,0,0,3,3)
+		elseif (eachPiece.type == "drawer") then
+			spr(spriteReturn(drawerAnimation, 2, 15, 432),eachPiece.x,eachPiece.y,14,1,0,0,3,2)
+		end
+	end
 end
 
 function draw()
 
 	cls(0)
 	
-	map(0,0,30,17,0,0,1)
+	map(30,18,30,17)
 	
 	drawPlayer()
-	print("Hello Cabide!",85,0)
 
 	-- if(player.x > 118) then
 	-- 	isLeftSide=false
@@ -245,7 +299,7 @@ function draw()
 	
 	--drawRightSide()
 	--drawReflexion()
-	
+	drawFurniture()
 	drawWeapon()
 	drawCrossair()
 
@@ -254,11 +308,15 @@ end
 
 init()
 function TIC()
+	print(furniture, 84, 84)
 	playerMovement()
-	playerPos()
+	position(player)
+	
+	positionFurniture()
 	shoot()
 
 	updateWeapon()
+	updateFurniture()
 	draw()
 	t=t+1
 	if(hangerShot) then spammingHanger = spammingHanger - 1 end 
@@ -267,6 +325,10 @@ function TIC()
 		canShoot = true
 		hangerShot = false
 	end 
+
+	if(t/40%4 == 0) then
+		createFurniture()
+	end
 end
 
 
