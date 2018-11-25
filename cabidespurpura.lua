@@ -224,7 +224,23 @@ function playerCollision()
 	end
 end
 
-
+function playerOwnCollision()
+	for id, weaponInUsage in pairs(weapon) do
+		print(player.x,80,20)
+		print(math.ceil(weaponInUsage.x),100,20)
+		if(math.ceil( player.x )-8 <= math.ceil(weaponInUsage.x) and math.ceil( player.x )+8 >= math.ceil(weaponInUsage.x) and math.ceil(player.y)+8 >= math.ceil(weaponInUsage.y)  and math.ceil(player.y)-8 <= math.ceil(weaponInUsage.y)) then
+			player.hp = player.hp - 10
+			if(player.hp <= 0) then
+				gameState=5
+			end
+			if(weaponInUsage.lives>0) then
+				weaponInUsage.lives = weaponInUsage.lives - 1
+			else
+				table.remove(weapon,id)
+			end
+		end
+	end
+end
 
 
 function spriteReturn(animation, n, acceleration, n0)
@@ -294,6 +310,26 @@ end
 function createWeapons(lastX,lastY)
 	dx=lastX-player.x
 	dy=lastY-player.y
+
+
+	if dx >= 0 and dy < 0 then
+		tempX=player.x+17
+		tempY=player.y-17
+	elseif dx >= 0 and dy >= 0 then
+		tempX=player.x+17
+		tempY=player.y+17
+	elseif dx < 0 and dy >= 0 then
+		tempX=player.x-17
+		tempY=player.y+17
+	elseif dx < 0 and dy < 0 then
+		tempX=player.x-17
+		tempY=player.y-17	
+
+	end
+
+	dx=lastX-tempX
+	dy=lastY-tempY
+
 	if math.abs(dx) >= math.abs(dy) then 
 		step = math.abs(dx)  
 		boolTemp = true
@@ -301,10 +337,12 @@ function createWeapons(lastX,lastY)
 		step = math.abs(dy) 
 		boolTemp = false
 	end
+
+	
 	
 	local newWeapon={
-		x=player.x,
-		y=player.y-5,
+		x=tempX,
+		y=tempY,
 		destX=lastX,
 		destY=lastY,
 		dx = dx/step,
@@ -589,12 +627,12 @@ function game()
 	shoot()
 	collision()
 	playerCollision()
-
 	updateWeapon()
 	updateFurniture()
 	raiseDifficulty()
 
 	draw()
+	playerOwnCollision()
 
 	
 	print(player.hp, 2,2)
