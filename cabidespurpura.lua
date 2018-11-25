@@ -602,10 +602,11 @@ function game()
 
 	draw()
 
-	
-	print(player.hp, 2,2)
-	print(math.ceil(t/60), 22, 2)
-	print(frequency, 34, 2)
+	print("HP : ",2,2)
+	print(player.hp, 25,2)
+	print("TIME : ", 45, 2)
+	print(math.ceil(t/60), 70, 2)
+	--print(frequency, 34, 2)
 
 
 	t=t+1
