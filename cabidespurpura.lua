@@ -3,7 +3,10 @@
 -- desc:   lança cruzetas
 -- script: lua
 
-DEFAULT_OBSTACLE_Y=-460
+BORDER_LEFT=5
+BORDER_RIGHT=218
+BORDER_TOP=1
+BORDER_BOT=118
 
 t=0
 x=110
@@ -35,10 +38,6 @@ midPosRight = 123
 
 function init()
 
-	isLeftSide=true
-
-	
-
 	weapon={}
 
 	furniture={}
@@ -50,7 +49,8 @@ function init()
 
 	player={
 		x=110,
-		y=110
+		y=110,
+		isLeftSide = true
 	}
 
 
@@ -103,29 +103,26 @@ function playerMovement()
 		left=1
 		player.x = player.x-1*inverted
 	end
-	if(checkBounds()) then 
-		if player.x>199 then player.x=199
-		else player.x=24
-		end
-	end
+	checkBounds()
+
 end
 
 
 function checkBounds()
-	if(player.x<24 or player.x>199) then
-		return true
-	else
-		return false
+	if player.x < BORDER_LEFT then
+		player.x = BORDER_LEFT
+	end
+	if player.x > BORDER_RIGHT then
+		player.x = BORDER_RIGHT
+	end
+	if player.y < BORDER_TOP then
+		player.y = BORDER_TOP
+	end
+	if player.y > BORDER_BOT then
+		player.y = BORDER_BOT
 	end
 end
 
-function drawReflexion()
-	for i=0, 135 do
-		for j=0, 59 do
-			memcpy(((120+j*2)+240*i)*4/8,(j*2+240*i)*4/8,2)
-		end
-	end
-end
 function createWeapons()
 	local newWeapon={
 		x=player.x,
@@ -153,12 +150,12 @@ end
 function drawWeapon()
 	checkWeaponBoundsAndLives()
 	for id,eachWeapon in pairs(weapon) do
-		if eachWeapon.x < midPosLeft and isLeftSide then
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,0,1,0,0,2,2)
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-24-eachWeapon.x,eachWeapon.y,0,1,0,2,2,2)
-		elseif (eachWeapon.x > midPosRight and not isLeftSide) then
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,0,1,0,0,2,2)
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-8-eachWeapon.x,eachWeapon.y,0,1,0,2,2,2)
+		if eachWeapon.x < midPosLeft and player.isLeftSide then
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-24-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
+		elseif (eachWeapon.x > midPosRight and not player.isLeftSide) then
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-8-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
 		end
 	end
 end
@@ -176,14 +173,19 @@ end
 function drawPlayer()
 	if(left==1) then
 		spr(spriteReturn(characterSidewaysLeft,4,30,422),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterSidewaysLeft,4,30,422),239-16-player.x,player.y,14,1,1,0,2,2)
 	elseif(up==1) then
 		spr(spriteReturn(characterAnimationUp, 4, 30, 295),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterAnimationUp, 4, 30, 295),239-16-player.x,player.y,14,1,1,0,2,2)
 	elseif(down==1) then
 		spr(spriteReturn(characterAnimationDown, 4, 30, 390),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterAnimationDown, 4, 30, 390),239-16-player.x,player.y,14,1,1,0,2,2)
 	elseif(right==1) then
 		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),239-16-player.x,player.y,14,1,1,0,2,2)
 	else
 		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),239-16-player.x,player.y,14,1,1,0,2,2)
 	end
 end
 
@@ -206,23 +208,21 @@ function drawRightSide()
 end 
 
 function position(object)
-	if object.x >= midPosLeft and isLeftSide then
-		isLeftSide = false
+	if object.x >= midPosLeft and object.isLeftSide then
+		object.isLeftSide = false
 		if object.x < midPosRight then
 			object.x = midPosRight + 1
 		end
-	elseif object.x <= midPosRight and not isLeftSide then
-		isLeftSide = true
+	elseif object.x <= midPosRight and not object.isLeftSide then
+		object.isLeftSide = true
 		if object.x > midPosLeft then
 			object.x = midPosLeft - 1 
 		end
 	end
 end
 
-function drawPlayer()
-	spr(289,player.x,player.y,14,1,0,0,2,2)
-	--spr(1,239-24-player.x,player.y,14,1,0,2,2,2)
-end
+
+
 
 function createFurniture()
 
@@ -238,9 +238,11 @@ function createFurniture()
 	
 
 	local newFurniture={
-		x=12,
+		x=12+(choice*200),
 		y=12,
-		type = type_t
+		type = type_t,
+		isLeftSide = true,
+		side = choice
 	}
 
 	if(t/40%4 == 0) then
@@ -251,7 +253,11 @@ end
 
 function updateFurniture()
 	for id, eachPiece in pairs(furniture) do
-		eachPiece.x = eachPiece.x+1
+		if(eachPiece.side == 0) then
+			eachPiece.x = eachPiece.x+1
+		else
+			eachPiece.x = eachPiece.x-1
+		end
 		drawFurniture()
 	end
 
@@ -322,6 +328,10 @@ function TIC()
 	if(t/40%4 == 0) then
 		createFurniture()
 	end
+
+	print(player.x, 84, 84)
+	
+
 end
 
 
