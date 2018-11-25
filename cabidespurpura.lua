@@ -75,10 +75,12 @@ end
 --state machine
 function stateMachine()
 
-if(gameState == 0) then begin() 
-elseif(gameState == 1) then  tutorial()
+if(gameState == 0) then menu() 
+elseif(gameState == 1) then  begin()
 elseif(gameState == 2) then game() 
-elseif(gameState == 3) then credits() end
+elseif(gameState == 3) then credits() 
+elseif(gameState == 4) then tutorial()
+end
 
 end
 
@@ -93,7 +95,25 @@ function begin()
 		print("He instantly grabed the first thing ", 20, 100);
 		print("he had next to him. Hangers!",20,110)
 
-	if(mouseVars.pressed) then gameState = 1 end
+	if(mouseVars.pressed) then gameState = 2 end
+
+	return
+
+end
+
+function menu()
+
+	map(00,00,30,17)
+	
+		print("Menu : ",20,40)
+		print("UP - Play the Game",20,60)
+		print("DOWN - Controls ", 20, 70);
+		print("RIGHT - Credits",20,80)
+
+	if(btn(0)) then gameState = 1 
+	elseif(btn(1)) then gameState = 4
+	elseif(btn(3)) then gameState = 3 
+	end
 
 	return
 
@@ -108,9 +128,9 @@ function tutorial()
 	print("Right arrow - Move RIGHT",30,60)
 	print("Up arrow - Move UP",30,70)
 	print("Down arrow - Move Down",30,80)
-	print("Right Button - Throw a hanger",30,90)
+	print("LEFT Button - Throw a hanger",30,90)
 
-	if(mouseVars.pressed) then gameState = 2 end
+	if(mouseVars.pressed) then gameState = 0 end
 end
 
 function credits()
@@ -123,6 +143,8 @@ function credits()
 	print("Pedro Sousa",30,70)
 	print("Ventura Pereira ",30,80)
 	print("Vicente Espinha",30,90)
+
+	if(mouseVars.pressed) then gameState = 0 end
 end
 
 
