@@ -32,11 +32,6 @@ hangerShot = false
 canShoot = true
 
 
-U={x=0,y=-1}
-D={x=0,y=1}
-L={x=-1,y=0}
-R={x=1,y=0}
-
 
 
 midPosLeft = 107
@@ -44,7 +39,7 @@ midPosRight = 123
 
 function init()
 	
-	gameState = 2
+	gameState = 0
 	isLeftSide=true
 
 	mouseVars ={
@@ -126,17 +121,22 @@ function credits()
 end
 
 
-function collision_ahead(dir)
-	local x  = dir.x
-	local y= dir.y
-	n = spriteReturn(drawerAnimation, 2, 15, 432)
-	print(mget(30+player.x/8+x,17+player.y/8+y),95,16)
-	if mget(player.x/8+x+30,player.y/8+y+17)~=64  then
-		return true
-	else
-		return false 
+function collision()
+	
+	for id, weaponInUsage in pairs(weapon) do
+		for id2, badFurniture in pairs(furniture) do
+			print(math.ceil(weaponInUsage.y),80,20)
+			print(badFurniture.y,110,20)
+			if((math.ceil(weaponInUsage.x)<=badFurniture.x+badFurniture.width and math.ceil(weaponInUsage.x)>=badFurniture.x-badFurniture.width) and (math.ceil(weaponInUsage.y)<=badFurniture.y+badFurniture.heigth and math.ceil(weaponInUsage.y)>=badFurniture.y-badFurniture.heigth)) then
+				print("hit!", 150,20)
+				table.remove(furniture, id2)
+			end
+		end
 	end
+
 end
+
+
 
 
 function spriteReturn(animation, n, acceleration, n0)
@@ -155,28 +155,28 @@ end
 
 
 function playerMovement()
-	if btn(0) and collision_ahead(U) then
+	if btn(0) then
 		up=1
 		down=0
 		right=0
 		left=0 
 		player.y=player.y-1*inverted 
 	end
-	if btn(1) and collision_ahead(D) then
+	if btn(1) then
 		up=0
 		down=1
 		right=0
 		left=0  
 		player.y=player.y+1*inverted 
 	end 
-	if btn(3) and collision_ahead(R) then
+	if btn(3)  then
 		up=0
 		down=0
 		right=1
 		left=0 
 		player.x=player.x+1*inverted
 	end
-	if btn(2) and collision_ahead(L) then
+	if btn(2)  then
 		up=0
 		down=0
 		right=0
@@ -343,6 +343,8 @@ function createFurniture()
 	local newFurniture={
 		x=12+(choice*200),
 		y=12,
+		width=16,
+		heigth=16,
 		type = type_t,
 		isLeftSide = true,
 		side = choice
@@ -411,14 +413,14 @@ function game()
 	
 	print(furniture, 84, 84)
 	position(player)
-	
+	playerMovement()
 	positionFurniture()
 	shoot()
-	
 	updateWeapon()
 	updateFurniture()
 	draw()
-	playerMovement()
+	collision()
+
 
 	t=t+1
 	
