@@ -3,7 +3,10 @@
 -- desc:   lança cruzetas
 -- script: lua
 
-DEFAULT_OBSTACLE_Y=-460
+BORDER_LEFT=5
+BORDER_RIGHT=218
+BORDER_TOP=1
+BORDER_BOT=118
 
 t=0
 x=110
@@ -101,29 +104,27 @@ function playerMovement()
 		left=1
 		player.x = player.x-1*inverted
 	end
-	if(checkBounds()) then 
-		if player.x>199 then player.x=199
-		else player.x=24
-		end
-	end
+	checkBounds()
+
 end
 
 
 function checkBounds()
-	if(player.x<24 or player.x>199) then
-		return true
-	else
-		return false
+	if player.x < BORDER_LEFT then
+		player.x = BORDER_LEFT
+	end
+	if player.x > BORDER_RIGHT then
+		player.x = BORDER_RIGHT
+	end
+	if player.y < BORDER_TOP then
+		player.y = BORDER_TOP
+	end
+	if player.y > BORDER_BOT then
+		player.y = BORDER_BOT
 	end
 end
 
-function drawReflexion()
-	for i=0, 135 do
-		for j=0, 59 do
-			memcpy(((120+j*2)+240*i)*4/8,(j*2+240*i)*4/8,2)
-		end
-	end
-end
+
 function creatWeapons()
 	local newWeapon={
 		x=player.x,
@@ -153,11 +154,11 @@ function drawWeapon()
 	checkWeaponBoundsAndLives()
 	for id,eachWeapon in pairs(weapon) do
 		if eachWeapon.x < midPosLeft and isLeftSide then
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,0,1,0,0,2,2)
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-24-eachWeapon.x,eachWeapon.y,0,1,0,2,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-24-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
 		elseif (eachWeapon.x > midPosRight and not isLeftSide) then
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,0,1,0,0,2,2)
-			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-8-eachWeapon.x,eachWeapon.y,0,1,0,2,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),eachWeapon.x,eachWeapon.y,6,1,0,0,2,2)
+			spr(spriteReturn(hangerAnimation, 4, 5, hangern0),239-8-eachWeapon.x,eachWeapon.y,6,1,1,0,2,2)
 		end
 	end
 end
@@ -174,14 +175,19 @@ end
 function drawPlayer()
 	if(left==1) then
 		spr(spriteReturn(characterSidewaysLeft,4,30,422),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterSidewaysLeft,4,30,422),239-16-player.x,player.y,14,1,1,0,2,2)
 	elseif(up==1) then
 		spr(spriteReturn(characterAnimationUp, 4, 30, 295),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterAnimationUp, 4, 30, 295),239-16-player.x,player.y,14,1,1,0,2,2)
 	elseif(down==1) then
 		spr(spriteReturn(characterAnimationDown, 4, 30, 390),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterAnimationDown, 4, 30, 390),239-16-player.x,player.y,14,1,1,0,2,2)
 	elseif(right==1) then
 		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),239-16-player.x,player.y,14,1,1,0,2,2)
 	else
 		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),player.x,player.y,14,1,0,0,2,2)
+		spr(spriteReturn(characterSidewaysRight, 4, 30, 454),239-16-player.x,player.y,14,1,1,0,2,2)
 	end
 end
 
@@ -216,10 +222,6 @@ function playerPos()
 	end
 end
 
-function drawPlayer()
-	spr(1,player.x,player.y,14,1,0,0,2,2)
-	spr(1,239-24-player.x,player.y,14,1,0,2,2,2)
-end
 
 function draw()
 
