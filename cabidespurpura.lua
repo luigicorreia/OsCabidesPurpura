@@ -32,6 +32,11 @@ hangerShot = false
 canShoot = true
 
 
+U={x=0,y=-1}
+D={x=0,y=1}
+L={x=-1,y=0}
+R={x=1,y=0}
+
 
 
 midPosLeft = 107
@@ -67,6 +72,19 @@ function init()
 end	
 
 
+function collision_ahead(dir)
+	local x  = dir.x
+	local y= dir.y
+	n = spriteReturn(drawerAnimation, 2, 15, 432)
+	print(mget(30+player.x/8+x,17+player.y/8+y),95,16)
+	if mget(player.x/8+x+30,player.y/8+y+17)~=64  then
+		return true
+	else
+		return false 
+	end
+end
+
+
 function spriteReturn(animation, n, acceleration, n0)
 
 	hangerSpriteNumber = animation[math.ceil((t/acceleration)%n)]
@@ -85,28 +103,28 @@ end
 
 
 function playerMovement()
-	if btn(0) then
+	if btn(0) and collision_ahead(U) then
 		up=1
 		down=0
 		right=0
 		left=0 
 		player.y=player.y-1*inverted 
 	end
-	if btn(1) then
+	if btn(1) and collision_ahead(D) then
 		up=0
 		down=1
 		right=0
 		left=0  
 		player.y=player.y+1*inverted 
 	end 
-	if btn(3) then
+	if btn(3) and collision_ahead(R) then
 		up=0
 		down=0
 		right=1
 		left=0 
 		player.x=player.x+1*inverted
 	end
-	if btn(2) then
+	if btn(2) and collision_ahead(L) then
 		up=0
 		down=0
 		right=0
@@ -317,7 +335,6 @@ function draw()
 	cls(0)
 	
 	map(30,18,30,17)
-	
 	drawPlayer()
 
 	-- if(player.x > 118) then
@@ -338,7 +355,6 @@ end
 init()
 function TIC()
 	print(furniture, 84, 84)
-	playerMovement()
 
 	position(player)
 	
@@ -348,6 +364,7 @@ function TIC()
 	updateWeapon()
 	updateFurniture()
 	draw()
+	playerMovement()
 
 	
 	t=t+1
