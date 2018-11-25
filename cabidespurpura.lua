@@ -68,6 +68,7 @@ function init()
 		hp=100,
 		isLeftSide = true
 	}
+	tFinal = 0
 
 
 end	
@@ -80,6 +81,7 @@ elseif(gameState == 1) then  begin()
 elseif(gameState == 2) then game() 
 elseif(gameState == 3) then credits() 
 elseif(gameState == 4) then tutorial()
+elseif(gameState == 5) then score()
 end
 
 end
@@ -91,9 +93,10 @@ function begin()
 		spr(390,90,20,14,3,0,0,2,2)	
 	
 		print("One day, little Mac woke up and said ",20,80)
-		print("'Oh Shit! My wardrobe is alive !'",20,90)
-		print("He instantly grabed the first thing ", 20, 100);
+		print("'Oh Snap! My wardrobe is alive !'",20,90)
+		print("He instantly grabbed the first thing ", 20, 100);
 		print("he had next to him. Hangers!",20,110)
+		
 
 	if(mouseVars.pressed) then gameState = 2 end
 
@@ -107,11 +110,11 @@ function menu()
 	
 		print("Menu : ",20,40)
 		print("UP - Play the Game",20,60)
-		print("DOWN - Controls ", 20, 70);
+		print("LEFT - Controls ", 20, 70);
 		print("RIGHT - Credits",20,80)
 
 	if(btn(0)) then gameState = 1 
-	elseif(btn(1)) then gameState = 4
+	elseif(btn(2)) then gameState = 4
 	elseif(btn(3)) then gameState = 3 
 	end
 
@@ -129,8 +132,9 @@ function tutorial()
 	print("Up arrow - Move UP",30,70)
 	print("Down arrow - Move Down",30,80)
 	print("LEFT Button - Throw a hanger",30,90)
+	print("Press DOWN to return to menu",60,110)
 
-	if(mouseVars.pressed) then gameState = 0 end
+	if(btn(1)) then gameState = 0 end
 end
 
 function credits()
@@ -143,8 +147,25 @@ function credits()
 	print("Pedro Sousa",30,70)
 	print("Ventura Pereira ",30,80)
 	print("Vicente Espinha",30,90)
+	print("Press DOWN to return to menu",60,110)
 
-	if(mouseVars.pressed) then gameState = 0 end
+	if(btn(1)) then gameState = 0 end
+end
+
+function score()
+
+	map(00,00,30,17)
+
+	print("Game Over", 20, 30)
+
+	print("Time :",20,50)
+	print(tFinal,55,50)
+	print("seconds", 75, 50)
+
+	print("Press DOWN to return to menu",60,110)
+
+	if(btn(1)) then reset() end
+
 end
 
 function changeDir(object)
@@ -196,7 +217,8 @@ function playerCollision()
 					hit = true
 				end
 			else
-				gameState=3
+				gameState=5
+				tFinal = math.ceil(t/60)
 			end
 		end
 	end
@@ -559,7 +581,8 @@ end
 
 --game logic
 function game()
-	
+
+	print(furniture, 84, 84)
 	position(player)
 	playerMovement()
 	positionFurniture()
